@@ -4,29 +4,23 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-// 18 images
+// 12 images
 const images = [
-  "/game-photos/1.avif",
-  "/game-photos/2.avif",
-  "/game-photos/3.avif",
-  "/game-photos/4.avif",
-  "/game-photos/5.avif",
-  "/game-photos/6.avif",
-  "/game-photos/7.avif",
-  "/game-photos/8.avif",
-  "/game-photos/9.avif",
-  "/game-photos/10.avif",
-  "/game-photos/11.avif",
-  "/game-photos/12.avif",
-  "/game-photos/13.avif",
-  "/game-photos/14.avif",
-  "/game-photos/15.avif",
-  "/game-photos/16.avif",
-  "/game-photos/17.avif",
-  "/game-photos/18.avif",
+  "/game-photos/mine-1.avif",
+  "/game-photos/mine-2.avif",
+  "/game-photos/mine-3.avif",
+  "/game-photos/mine-4.avif",
+  "/game-photos/mine-5.avif",
+  "/game-photos/mine-6.avif",
+  "/game-photos/mine-7.avif",
+  "/game-photos/mine-8.avif",
+  "/game-photos/mine-9.avif",
+  "/game-photos/mine-10.avif",
+  "/game-photos/mine-11.avif",
+  "/game-photos/mine-12.avif",
 ];
 
-// Create 18 pairs of images (36 images in total)
+// Create 12 pairs of images (24 cards in total)
 const imagePairs = images.flatMap((image) => [image, image]);
 
 const shuffleArray = (array: string[]) => {
@@ -38,13 +32,11 @@ const shuffleArray = (array: string[]) => {
 };
 
 const heartLayout = [
-  [null, null, 0, 1, null, 2, 3, null, null],
-  [null, 4, 5, 6, 7, 8, 9, 10, null],
-  [11, 12, 13, 14, 15, 16, 17, 18, 19],
-  [null, 20, 21, 22, 23, 24, 25, 26, null],
-  [null, null, 27, 28, 29, 30, 31, null, null],
-  [null, null, null, 32, 33, 34, null, null, null],
-  [null, null, null, null, 35, null, null, null, null],
+  [null, 0, 1, null, 2, 3, null],
+  [4, 5, 6, 7, 8, 9, 10],
+  [null, 11, 12, 13, 14, 15, null],
+  [null, 16, 17, 18, 19, 20, null],
+  [null, null, 21, 22, 23, null, null],
 ];
 
 type ValentinesProposalProps = {
@@ -89,7 +81,7 @@ export default function PhotoPairGame({
   }, [matched, handleShowProposal]);
 
   return (
-    <div className="grid grid-cols-9 gap-1 lg:gap-2 max-w-[95vw] mx-auto place-items-center">
+    <div className="grid grid-cols-7 gap-1 lg:gap-2 max-w-[95vw] mx-auto place-items-center">
       {/* Image preload */}
       <div className="hidden">
         {images.map((image, i) => (

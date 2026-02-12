@@ -9,44 +9,20 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
 });
 
-// 36 images
+// 24 images
 const images = [
-  "/game-photos/1.avif",
-  "/game-photos/2.avif",
-  "/game-photos/3.avif",
-  "/game-photos/4.avif",
-  "/game-photos/5.avif",
-  "/game-photos/6.avif",
-  "/game-photos/7.avif",
-  "/game-photos/8.avif",
-  "/game-photos/9.avif",
-  "/game-photos/10.avif",
-  "/game-photos/11.avif",
-  "/game-photos/12.avif",
-  "/game-photos/13.avif",
-  "/game-photos/14.avif",
-  "/game-photos/15.avif",
-  "/game-photos/16.avif",
-  "/game-photos/17.avif",
-  "/game-photos/18.avif",
-  "/game-photos/19.avif",
-  "/game-photos/20.avif",
-  "/game-photos/21.avif",
-  "/game-photos/22.avif",
-  "/game-photos/23.avif",
-  "/game-photos/24.avif",
-  "/game-photos/25.avif",
-  "/game-photos/26.avif",
-  "/game-photos/27.avif",
-  "/game-photos/28.avif",
-  "/game-photos/29.avif",
-  "/game-photos/30.avif",
-  "/game-photos/31.avif",
-  "/game-photos/32.avif",
-  "/game-photos/33.avif",
-  "/game-photos/34.avif",
-  "/game-photos/35.avif",
-  "/game-photos/36.avif",
+  "/game-photos/mine-1.avif",
+  "/game-photos/mine-2.avif",
+  "/game-photos/mine-3.avif",
+  "/game-photos/mine-4.avif",
+  "/game-photos/mine-5.avif",
+  "/game-photos/mine-6.avif",
+  "/game-photos/mine-7.avif",
+  "/game-photos/mine-8.avif",
+  "/game-photos/mine-9.avif",
+  "/game-photos/mine-10.avif",
+  "/game-photos/mine-11.avif",
+  "/game-photos/mine-12.avif",
 ];
 
 export default function ValentinesProposal() {
@@ -91,7 +67,7 @@ export default function ValentinesProposal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            Congratulations! You have completed the game.
+            Congratulations! You have completed the game. Before you go...
           </motion.h2>
         )}
         {step === 1 && (
@@ -103,7 +79,7 @@ export default function ValentinesProposal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            I have a surprise for you!
+            I have a surprise for you babyy!
           </motion.h2>
         )}
         {step === 2 && (
@@ -117,7 +93,7 @@ export default function ValentinesProposal() {
           >
             {/* Image Grid Background */}
             <div className="absolute inset-0 grid grid-cols-6 opacity-10">
-              {images.slice(0, 36).map((src, index) => (
+              {images.slice(0, 12).map((src, index) => (
                 <div key={index} className="relative h-full">
                   <Image
                     src={src}
@@ -176,7 +152,6 @@ export default function ValentinesProposal() {
             exit={{ opacity: 0 }}
           >
             Thank you for accepting, I love you! 💕
-            <p className="text-sm mt-4">For more information, write me!!! 💌</p>
             <Image
               src="/hamster_jumping.gif"
               alt="Hamster Feliz"
