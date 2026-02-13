@@ -51,6 +51,22 @@ export default function PhotoPairGame({
   const [incorrect, setIncorrect] = useState<number[]>([]);
   const [images] = useState(() => shuffleArray([...imagePairs]));
   const timeoutRefs = useRef<NodeJS.Timeout[]>([]);
+  const imagesLoadedRef = useRef<Set<string>>(new Set());
+
+  // Preload unique images efficiently on mount
+  useEffect(() => {
+    const uniqueImages = Array.from(new Set(images));
+    uniqueImages.forEach((imageSrc) => {
+      if (!imagesLoadedRef.current.has(imageSrc)) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = imageSrc;
+        document.head.appendChild(link);
+        imagesLoadedRef.current.add(imageSrc);
+      }
+    });
+  }, [images]);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -101,7 +117,7 @@ export default function PhotoPairGame({
 
   return (
     <div className="grid grid-cols-7 gap-1 lg:gap-2 max-w-[95vw] mx-auto place-items-center">
-      {flattenedLayout.map((index, i) =>
+        {flattenedLayout.map((index, i) =>
         index !== null ? (
           <motion.div
             key={i}
@@ -127,25 +143,26 @@ export default function PhotoPairGame({
               />
             )}
 
-            {/* Front of the card (image) */}
-            {(selected.includes(index) || matched.includes(index)) && (
-              <motion.div
-                className="w-full h-full absolute"
-                initial={{ rotateY: -180 }}
-                animate={{ rotateY: 0 }}
-                transition={{ duration: 0.5 }}
-                style={{ backfaceVisibility: "hidden" }}
-              >
-                <Image
-                  src={images[index]}
-                  alt={`Imagen ${index + 1}`}
-                  fill
-                  className="rounded-sm lg:rounded-md object-cover"
-                  sizes="(max-width: 768px) 11vh, 80px"
-                  loading="lazy"
-                />
-              </motion.div>
-            )}
+            {/* Front of the card (image) - always rendered but hidden until needed */}
+            <motion.div
+              className="w-full h-full absolute"
+              initial={{ rotateY: -180 }}
+              animate={{ 
+                rotateY: (selected.includes(index) || matched.includes(index)) ? 0 : -180,
+                opacity: (selected.includes(index) || matched.includes(index)) ? 1 : 0
+              }}
+              transition={{ duration: 0.5 }}
+              style={{ backfaceVisibility: "hidden" }}
+            >
+              <Image
+                src={images[index]}
+                alt={`Imagen ${index + 1}`}
+                fill
+                className="rounded-sm lg:rounded-md object-cover"
+                sizes="(max-width: 768px) 11vh, 80px"
+                priority={false}
+              />
+            </motion.div>
 
             {/* Incorrect animation */}
             {incorrect.includes(index) && (
