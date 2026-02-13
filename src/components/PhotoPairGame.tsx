@@ -140,7 +140,7 @@ export default function PhotoPairGame({
       {/* Skip button */}
       <button
         onClick={handleSkipPuzzle}
-        className="absolute right-10 top-5 z-50 px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm lg:text-base font-semibold rounded-lg backdrop-blur-sm transition-all duration-200 border border-white/30"
+        className="fixed right-10 top-5 z-50 px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm lg:text-base font-semibold rounded-lg backdrop-blur-sm transition-all duration-200 border border-white/30"
         style={{ fontFamily: 'inherit' }}
       >
         For my overstimulated baby
