@@ -84,8 +84,9 @@ export default function PhotoPairGame({
       setSelected((prev) => [...prev, index]);
 
       if (images[firstIndex] === images[index]) {
+        // Match found - add to matched
+        // Don't clear selected immediately - let useEffect handle it after matched updates
         setMatched((prev) => [...prev, firstIndex, index]);
-        setSelected([]);
       } else {
         await new Promise((resolve) => {
           const timeout = setTimeout(resolve, 1000);
@@ -102,6 +103,12 @@ export default function PhotoPairGame({
     }
   }, [selected, matched, images]);
 
+  // Clear selected cards that are now matched
+  useEffect(() => {
+    // Remove any selected cards that are now in matched
+    setSelected((prev) => prev.filter((index) => !matched.includes(index)));
+  }, [matched]);
+
   // Check if game is won
   useEffect(() => {
     if (matched.length === imagePairs.length) {
@@ -112,11 +119,34 @@ export default function PhotoPairGame({
     }
   }, [matched, handleShowProposal]);
 
+  // Function to skip puzzle and mark all as completed
+  const handleSkipPuzzle = useCallback(() => {
+    // Clear any pending timeouts
+    timeoutRefs.current.forEach((timeout) => clearTimeout(timeout));
+    timeoutRefs.current = [];
+    
+    // Mark all cards as matched - the useEffect will detect completion and call handleShowProposal
+    const allIndices = Array.from({ length: imagePairs.length }, (_, i) => i);
+    setMatched(allIndices);
+    setSelected([]);
+    setIncorrect([]);
+  }, []);
+
   // Memoize the flattened layout to avoid recalculating on every render
   const flattenedLayout = useMemo(() => heartLayout.flat(), []);
 
   return (
-    <div className="grid grid-cols-7 gap-1 lg:gap-2 max-w-[95vw] mx-auto place-items-center">
+    <div className="relative">
+      {/* Skip button */}
+      <button
+        onClick={handleSkipPuzzle}
+        className="absolute right-10 top-5 z-50 px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm lg:text-base font-semibold rounded-lg backdrop-blur-sm transition-all duration-200 border border-white/30"
+        style={{ fontFamily: 'inherit' }}
+      >
+        For my overstimulated baby
+      </button>
+      
+      <div className="grid grid-cols-7 gap-1 lg:gap-2 max-w-[95vw] mx-auto place-items-center">
         {flattenedLayout.map((index, i) =>
         index !== null ? (
           <motion.div
@@ -179,6 +209,7 @@ export default function PhotoPairGame({
           <div key={i} className="w-[11vh] h-[11vh] lg:w-20 lg:h-20" />
         ),
       )}
+      </div>
     </div>
   );
 }
