@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Your Next.js config
+  images: {
+    formats: ['image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
+  },
+  // Optimize for mobile performance
+  experimental: {
+    optimizeCss: true,
+  },
 };
 
 export default nextConfig;

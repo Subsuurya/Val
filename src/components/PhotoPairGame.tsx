@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 // 12 images
 const images = [
@@ -50,8 +50,17 @@ export default function PhotoPairGame({
   const [matched, setMatched] = useState<number[]>([]);
   const [incorrect, setIncorrect] = useState<number[]>([]);
   const [images] = useState(() => shuffleArray([...imagePairs]));
+  const timeoutRefs = useRef<NodeJS.Timeout[]>([]);
 
-  const handleClick = async (index: number) => {
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutRefs.current.forEach((timeout) => clearTimeout(timeout));
+      timeoutRefs.current = [];
+    };
+  }, []);
+
+  const handleClick = useCallback(async (index: number) => {
     if (selected.length === 2 || matched.includes(index) || selected.includes(index)) return;
 
     if (selected.length === 1) {
@@ -62,46 +71,43 @@ export default function PhotoPairGame({
         setMatched((prev) => [...prev, firstIndex, index]);
         setSelected([]);
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
+        await new Promise((resolve) => {
+          const timeout = setTimeout(resolve, 1000);
+          timeoutRefs.current.push(timeout);
+        });
 
         setIncorrect([firstIndex, index]);
-        setTimeout(() => setIncorrect([]), 1000); // Clear incorrect after 1 second
-        setTimeout(() => setSelected([]), 1000);
+        const timeout1 = setTimeout(() => setIncorrect([]), 1000);
+        const timeout2 = setTimeout(() => setSelected([]), 1000);
+        timeoutRefs.current.push(timeout1, timeout2);
       }
     } else {
       setSelected([index]);
     }
-  };
+  }, [selected, matched, images]);
 
   // Check if game is won
   useEffect(() => {
     if (matched.length === imagePairs.length) {
+      // Clear any pending timeouts before showing proposal
+      timeoutRefs.current.forEach((timeout) => clearTimeout(timeout));
+      timeoutRefs.current = [];
       handleShowProposal();
     }
   }, [matched, handleShowProposal]);
 
+  // Memoize the flattened layout to avoid recalculating on every render
+  const flattenedLayout = useMemo(() => heartLayout.flat(), []);
+
   return (
     <div className="grid grid-cols-7 gap-1 lg:gap-2 max-w-[95vw] mx-auto place-items-center">
-      {/* Image preload */}
-      <div className="hidden">
-        {images.map((image, i) => (
-          <Image
-            key={i}
-            src={image}
-            alt={`Image ${i + 1}`}
-            fill
-            className="object-cover"
-            priority
-          />
-        ))}
-      </div>
-
-      {heartLayout.flat().map((index, i) =>
+      {flattenedLayout.map((index, i) =>
         index !== null ? (
           <motion.div
             key={i}
             className="w-[11vh] h-[11vh] lg:w-20 lg:h-20 relative cursor-pointer"
             whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => handleClick(index)}
             style={{ perspective: "1000px" }} // Add perspective for 3D effect
           >
@@ -135,6 +141,8 @@ export default function PhotoPairGame({
                   alt={`Imagen ${index + 1}`}
                   fill
                   className="rounded-sm lg:rounded-md object-cover"
+                  sizes="(max-width: 768px) 11vh, 80px"
+                  loading="lazy"
                 />
               </motion.div>
             )}
